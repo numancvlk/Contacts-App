@@ -5,20 +5,57 @@ import {
   FlatList,
   TouchableOpacity,
   TextInput,
+  Button,
 } from "react-native";
 
-import { useState } from "react";
+import { useState, useEffect } from "react";
+import AsyncStorage from "@react-native-async-storage/async-storage";
 
 import { dummyContacts } from "../data/DummyData";
 
 export default function ContactsScreen({ navigation }) {
   const [searchText, setSearchText] = useState("");
+  const [contact, setContact] = useState(dummyContacts);
 
   const filteredContacts = searchText
     ? dummyContacts.filter((contact) => {
         return contact.name.toLowerCase().includes(searchText.toLowerCase());
       })
-    : dummyContacts;
+    : contact;
+
+  useEffect(() => {
+    const loadContacts = async () => {
+      try {
+        const storedContacts = await AsyncStorage.getItem("contacts");
+        if (storedContacts !== null) {
+          setContact(JSON.parse(storedContacts));
+        }
+      } catch (error) {
+        console.log("AsyncStorage get error: ", error);
+      }
+    };
+
+    loadContacts();
+  }, []);
+
+  const addNewContact = async (newContact) => {
+    try {
+      setContact((prevContact) => {
+        const updatedContacts = [...prevContact, newContact];
+
+        AsyncStorage.setItem("contacts", JSON.stringify(updatedContacts));
+        return updatedContacts;
+      });
+    } catch (error) {
+      console.log(error);
+    }
+  };
+
+  const changeScreen = () => {
+    return navigation.navigate("AddContactScreen", {
+      addContact: addNewContact,
+    });
+  };
 
   return (
     <View style={myStyles.container}>
@@ -45,6 +82,9 @@ export default function ContactsScreen({ navigation }) {
           </TouchableOpacity>
         )}
       />
+      <TouchableOpacity style={myStyles.floatingButton} onPress={changeScreen}>
+        <Text style={myStyles.floatingButtonText}>+</Text>
+      </TouchableOpacity>
     </View>
   );
 }
@@ -85,5 +125,23 @@ const myStyles = StyleSheet.create({
     fontSize: 14,
     color: "#666",
     marginTop: 4,
+  },
+  floatingButton: {
+    position: "absolute",
+    right: 20,
+    bottom: 20,
+    backgroundColor: "#007AFF",
+    width: 60,
+    height: 60,
+    borderRadius: 30,
+    justifyContent: "center",
+    alignItems: "center",
+    elevation: 5,
+  },
+
+  floatingButtonText: {
+    color: "white",
+    fontSize: 30,
+    fontWeight: "bold",
   },
 });
