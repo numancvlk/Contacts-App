@@ -5,6 +5,7 @@ import {
   TouchableOpacity,
   View,
   Text,
+  Alert,
 } from "react-native";
 
 export default function AddContactScreen({ navigation, route }) {
@@ -12,17 +13,19 @@ export default function AddContactScreen({ navigation, route }) {
   const [name, setName] = useState("");
   const [phone, setPhone] = useState("");
   const [image, setImage] = useState("");
-  const [error, setError] = useState("");
 
   const handleAdd = () => {
-    if (!name || !phone) {
-      setError("İsim zorunludur.");
+    if (!name) {
+      Alert.alert("Invalid Input", "Name is required.");
       return;
     }
 
     const phoneRegex = /^[0-9]{11}$/;
     if (!phoneRegex.test(phone)) {
-      setError("Telefon numarası 11 haneli ve sadece rakamlardan oluşmalıdır.");
+      Alert.alert(
+        "Invalid Phone",
+        "Phone number must be exactly 11 digits and contain only numbers."
+      );
       return;
     }
 
@@ -37,37 +40,32 @@ export default function AddContactScreen({ navigation, route }) {
     setName("");
     setPhone("");
     setImage("");
-    setError("");
     navigation.goBack();
   };
 
   return (
     <View style={myStyles.container}>
-      {error ? <Text style={myStyles.errorText}>{error}</Text> : null}
-
       <TextInput
         style={myStyles.inputs}
-        placeholder="İsim"
+        placeholder="Name"
         value={name}
         onChangeText={(text) => {
           setName(text);
-          setError("");
         }}
       />
       <TextInput
         style={myStyles.inputs}
-        placeholder="Telefon (11 haneli)"
+        placeholder="Phone (11 digits)"
         value={phone}
         keyboardType="numeric"
         onChangeText={(text) => {
           setPhone(text);
-          setError("");
         }}
         maxLength={11}
       />
       <TextInput
         style={myStyles.inputs}
-        placeholder="Resim URL"
+        placeholder="Image URL"
         value={image}
         onChangeText={setImage}
       />
@@ -101,10 +99,5 @@ const myStyles = StyleSheet.create({
     color: "white",
     fontWeight: "bold",
     fontSize: 16,
-  },
-  errorText: {
-    color: "red",
-    marginBottom: 8,
-    fontWeight: "bold",
   },
 });

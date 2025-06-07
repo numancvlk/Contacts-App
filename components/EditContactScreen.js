@@ -5,6 +5,7 @@ import {
   StyleSheet,
   TouchableOpacity,
   Text,
+  Alert,
 } from "react-native";
 
 export default function EditContactScreen({ route, navigation }) {
@@ -15,6 +16,19 @@ export default function EditContactScreen({ route, navigation }) {
   const [image, setImage] = useState(contact.image);
 
   const handleSave = () => {
+    if (!name || !phone) {
+      Alert.alert("Invalid Input", "Name and phone fields are required");
+      return;
+    }
+
+    if (!/^\d{11}$/.test(phone)) {
+      Alert.alert(
+        "Invalid Phone",
+        "Phone number must consist of digits only and be exactly 11 characters long."
+      );
+      return;
+    }
+
     const updatedContact = {
       ...contact,
       name,
@@ -23,7 +37,7 @@ export default function EditContactScreen({ route, navigation }) {
     };
 
     updateContact(updatedContact);
-    navigation.goBack();
+    navigation.navigate("ContactsScreen");
   };
   return (
     <View style={myStyles.container}>
@@ -38,6 +52,7 @@ export default function EditContactScreen({ route, navigation }) {
         placeholder="Phone"
         value={phone}
         onChangeText={setPhone}
+        maxLength={11}
       />
       <TextInput
         style={myStyles.inputs}
