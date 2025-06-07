@@ -5,7 +5,6 @@ import {
   FlatList,
   TouchableOpacity,
   TextInput,
-  Button,
 } from "react-native";
 
 import { useState, useEffect } from "react";
@@ -18,7 +17,7 @@ export default function ContactsScreen({ navigation }) {
   const [contact, setContact] = useState(dummyContacts);
 
   const filteredContacts = searchText
-    ? dummyContacts.filter((contact) => {
+    ? contact.filter((contact) => {
         return contact.name.toLowerCase().includes(searchText.toLowerCase());
       })
     : contact;
@@ -57,6 +56,16 @@ export default function ContactsScreen({ navigation }) {
     });
   };
 
+  const deleteContact = async (id) => {
+    const updated = contact.filter((c) => c.id !== id);
+    setContact(updated);
+    try {
+      await AsyncStorage.setItem("contacts", JSON.stringify(updated));
+    } catch (err) {
+      console.log("Silme sırasında hata oluştu:", err);
+    }
+  };
+
   return (
     <View style={myStyles.container}>
       <Text style={myStyles.screenTitle}>All Contacts</Text>
@@ -73,7 +82,10 @@ export default function ContactsScreen({ navigation }) {
         renderItem={(data) => (
           <TouchableOpacity
             onPress={() =>
-              navigation.navigate("ContactDetailScreen", { contact: data.item })
+              navigation.navigate("ContactDetailScreen", {
+                contactData: data.item,
+                deleteContact: deleteContact,
+              })
             }
             style={myStyles.item}
           >
