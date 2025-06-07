@@ -8,7 +8,7 @@ import {
 } from "react-native";
 
 export default function ContactDetailScreen({ route, navigation }) {
-  const { contactData, deleteContact } = route.params;
+  const { contactData, deleteContact, updateContact } = route.params;
 
   const handleDelete = () => {
     Alert.alert(
@@ -41,6 +41,18 @@ export default function ContactDetailScreen({ route, navigation }) {
       <View>
         <TouchableOpacity style={myStyles.deleteButton} onPress={handleDelete}>
           <Text style={myStyles.deleteButtonText}>Delete Contact</Text>
+        </TouchableOpacity>
+      </View>
+      <View>
+        <TouchableOpacity
+          onPress={() =>
+            navigation.navigate("EditContactScreen", {
+              contact: contactData,
+              updateContact: updateContact,
+            })
+          }
+        >
+          <Text>Edit Contact</Text>
         </TouchableOpacity>
       </View>
     </View>

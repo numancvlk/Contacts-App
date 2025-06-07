@@ -41,7 +41,6 @@ export default function ContactsScreen({ navigation }) {
     try {
       setContact((prevContact) => {
         const updatedContacts = [...prevContact, newContact];
-
         AsyncStorage.setItem("contacts", JSON.stringify(updatedContacts));
         return updatedContacts;
       });
@@ -66,6 +65,20 @@ export default function ContactsScreen({ navigation }) {
     }
   };
 
+  const updateContact = async (updated) => {
+    try {
+      setContact((prev) => {
+        const updatedContacts = prev.map((c) =>
+          c.id === updated.id ? updated : c
+        );
+        AsyncStorage.setItem("contacts", JSON.stringify(updatedContacts));
+        return updatedContacts;
+      });
+    } catch (error) {
+      console.log("Update error:", error);
+    }
+  };
+
   return (
     <View style={myStyles.container}>
       <Text style={myStyles.screenTitle}>All Contacts</Text>
@@ -85,6 +98,7 @@ export default function ContactsScreen({ navigation }) {
               navigation.navigate("ContactDetailScreen", {
                 contactData: data.item,
                 deleteContact: deleteContact,
+                updateContact: updateContact,
               })
             }
             style={myStyles.item}

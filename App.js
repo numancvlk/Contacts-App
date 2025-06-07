@@ -7,6 +7,7 @@ import HomeScreen from "./components/HomeScreen";
 import ContactsScreen from "./components/ContactsScreen";
 import ContactDetailScreen from "./components/ContactDetailScreen";
 import AddContactScreen from "./components/AddContactScreen";
+import EditContactScreen from "./components/EditContactScreen";
 
 const Stack = createNativeStackNavigator();
 
@@ -38,6 +39,11 @@ export default function App() {
           name="AddContactScreen"
           component={AddContactScreen}
           options={{ title: "Add Contact" }}
+        />
+        <Stack.Screen
+          name="EditContactScreen"
+          component={EditContactScreen}
+          options={{ title: "Edit Contact" }}
         />
       </Stack.Navigator>
     </NavigationContainer>
